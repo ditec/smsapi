@@ -1,0 +1,85 @@
+<%= form_with(model: config, local: true, :url => config_path) do |form| %>
+  <% if config.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(config.errors.count, "error") %> prohibited this config from being saved:</h2>
+
+      <ul>
+      <% config.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field"m id= "config_delivery">
+    <%= form.label :delivery_method %>
+    <%= form.select :delivery_method, Sms::Config::DELIVERY_METHOD_TIPES %>
+
+    <%if @config.delivery_method == "X dias antes"%>
+      <div id= "cant"> 
+        <%= form.label :cant %>
+        <%= form.number_field :cant, min: 0, max:365 %>
+      </div>
+    <%else%>
+      <div style="display: none;" id= "cant">
+        <%= form.label :cant %>
+        <%= form.number_field :cant, min: 0, max:365 %>
+      </div>
+    <%end%>
+  </div>  
+  
+  <% if @config.time %>
+    <div class="field" id= "config_time">
+      <div> 
+        <%= label_tag :fixed_time %>
+        <%= check_box_tag :fixed_time, true, checked: true %>
+      </div> 
+      <div id= "time_select">
+        <%= form.time_select :time %>
+      </div>
+    </div>
+  <%else %>
+    <% if (@config.delivery_method == "Inmediato") %>
+      <div class="field" style="display: none;" id= "config_time">
+        <div> 
+          <%= label_tag :fixed_time %>
+          <%= check_box_tag :fixed_time, true %>
+        </div> 
+        <div style="display: none;" id= "time_select">
+          <%= form.time_select :time %>
+        </div>
+      </div>
+    <%else%>
+      <div class="field" id= "config_time">
+        <div> 
+          <%= label_tag :fixed_time %> 
+          <%= check_box_tag :fixed_time, true %>
+        </div> 
+        <div style="display: none;" id= "time_select">
+          <%= form.time_select :time %>
+        </div>
+      </div>
+    <%end%>
+  <%end%>
+
+  <div class="field">
+    <div> <%= form.label :template %> </div>
+    <%= form.text_area :template, cols: 30, rows: 8, id: "config_text_area" %>
+    <p id = "config_counter">
+      <% if @config.template %>
+        <%= "Characters left: #{160 - @config.template.gsub(/#\w+/, "").length}"%>
+      <%else%>
+        <%= "Characters left: 160"%>
+      <%end%>
+    </p>
+  </div>
+
+  <div class="field">
+    <%= form.label :key %>
+    <%= form.text_field :key %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

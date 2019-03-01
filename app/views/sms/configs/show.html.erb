@@ -1,0 +1,36 @@
+<%if @config.present?%>
+  <h2>SMS Config</h2>
+
+  <p>
+    <strong>Delivery_method:</strong>
+    <%= @config.delivery_method %>
+  </p>  
+
+  <%if @config.delivery_method == "X dias antes"%>
+    <p>
+      <strong>Cant:</strong>
+      <%= @config.cant %>
+    </p>
+  <%end%>
+
+  <%if @config.time.present? %>
+    <p>
+      <strong>Fixed time:</strong>
+      <%= @config.time.strftime('%H:%M') %>
+    </p>
+  <%end%>
+
+  <p>
+    <strong>Template:</strong>
+    <%= @config.template %>
+  </p>
+
+  <p>
+    <strong>key:</strong>
+    <%= @config.key %>
+  </p>
+
+  <%= link_to 'Edit', edit_config_path %>
+<%else%>
+  <%= link_to 'New config', new_config_path %>
+<%end%>
