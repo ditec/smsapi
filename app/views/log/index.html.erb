@@ -1,0 +1,35 @@
+<h1>SMS Log</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Message</th>
+      <th>Number</th>
+      <th>Status</th>
+      <th>Error</th>
+      <th>Response</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @messages.each do |message| %>
+      <tr>
+        <td><%= message.id %></td>
+        <td><%= message.text %></td>
+        <td><%= message.phone %></td>
+        <td><%= message.status %></td>
+        <td><%= message.error %></td>
+        <td> 
+          <ul>
+            <% message.responses.each do |response| %>
+              <li>
+                <%= response.text%>
+              </li>  
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

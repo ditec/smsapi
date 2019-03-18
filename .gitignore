@@ -83,7 +83,6 @@ config/sphinx.yml
 config/mongrel_cluster.yml
 db/schema.rb
 log/*.log
-log
 tmp
 coverage/
 nbproject
