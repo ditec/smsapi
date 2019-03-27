@@ -23,33 +23,39 @@ module Sms
           url = URI("http://"+ Sms::Engine.url_api_sms)
           url.port = Sms::Engine.port_api_sms
 
-          http = Net::HTTP.new(url.host, url.port)
+          if url.host.present? && url.port.present?
+            http = Net::HTTP.new(url.host, url.port)
 
-          request = Net::HTTP::Post.new(url)
-          request["Destinatario"] = message.phone.to_s
-          request["Mensaje"] = message.text
-          request["Id_sms"] = message.id.to_s
-          request["Emisor"] = config.key.to_s
-          request["Fecha_envio"] = date
+            request = Net::HTTP::Post.new(url)
+            request["Destinatario"] = message.phone.to_s
+            request["Mensaje"] = message.text
+            request["Id_sms"] = message.id.to_s
+            request["Emisor"] = config.key.to_s
+            request["Fecha_envio"] = date
 
-          response = http.request(request)
-          body = JSON.parse(response.body)
+            response = http.request(request)
+            body = JSON.parse(response.body)
 
-          if response.code.to_i == 200
-            if body["estado"].present? && message.update(status: body["estado"])
-              return message
+            if response.code.to_i == 200
+              if body["estado"].present? && message.update(status: body["estado"])
+                return message
+              else
+                message.update(status: "fail", error: "Error 200")
+              end 
             else
-              message.update(status: "fail", error: "Error 200")
-            end 
+              array = Array.new
+              errores = ["Error en el ID del mensaje", "Error en el destinatario", "Error en la fecha"]          
+              errores.each_with_index do |error, index|
+                array << error if !(body["errores"][index].nil?) && body["errores"][index] == 1
+              end 
+              array.empty? ? (error = "Error desconocido") : (error = array.join(", "))
+
+              message.update(status: "fail", error: error) 
+            end
           else
-            array = Array.new
-            errores = ["Error en el ID del mensaje", "Error en el destinatario", "Error en la fecha"]          
-            errores.each_with_index do |error, index|
-              array << error if !(body["errores"][index].nil?) && body["errores"][index] == 1
-            end 
-            message.update(status: "fail", error: array.join(", ")) 
+            message.update(status: "fail", error: "Servidor no configurado")
           end
-        rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError, Net::OpenTimeout => e       
+        rescue SocketError, OpenURI::HTTPError, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e       
           message.update(status: "fail", error: "Servidor no responde")
           puts e
         end
