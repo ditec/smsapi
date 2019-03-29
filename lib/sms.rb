@@ -96,7 +96,11 @@ module Sms
         time = Time.parse(config.time.strftime("%H:%M"))
         _date = DateTime.new(_date.year, _date.month, _date.day, time.hour, time.min, time.sec)
       end
-        
-      return _date
+      
+      if _date.present?
+        return _date.strftime('%Y-%m-%d %H:%M:%S')
+      else
+        return _date
+      end
     end 
 end
