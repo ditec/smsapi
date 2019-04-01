@@ -18,6 +18,8 @@ module Sms::ConfigConcern
   extend ActiveSupport::Concern
 
   included do
+    has_many :messages, dependent: :destroy
+
     DELIVERY_METHOD_TIPES = ["Inmediato", "Un dia antes", "X dias antes"]
     
     before_validation :_delivery_method
