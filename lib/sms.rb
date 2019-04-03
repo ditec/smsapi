@@ -91,6 +91,18 @@ module Sms
             request["Emisor"] = config.key.to_s
             request["Fecha_envio"] = date
 
+            Delayed::Worker.logger.info("---------------sms---------------")
+            Delayed::Worker.logger.info("---------------------------------")
+            Delayed::Worker.logger.info(request.to_hash.inspect)
+            Delayed::Worker.logger.info("---------------------------------")
+            Delayed::Worker.logger.info("---------------sms---------------")
+
+            Delayed::Worker.logger.info("---------------sms---------------")
+            Delayed::Worker.logger.info("---------------------------------")
+            Rails.logger.info(request.to_hash.inspect)
+            Delayed::Worker.logger.info("---------------------------------")
+            Delayed::Worker.logger.info("---------------sms---------------")
+
             response = http.request(request)
             body = JSON.parse(response.body)
 
