@@ -29,9 +29,7 @@ module Sms
   def self.resend! message_id
     message = Message.find(message_id)
 
-    if !message.nil? && message.status == "fail"
-      message.update(status: "pending", log: "reenviando..")
-      
+    if !message.nil? && !message.status == "success"
       return self.connect_to_api(message, message.date.strftime('%Y-%m-%d %H:%M:%S'), message.config)
     else
       return nil
