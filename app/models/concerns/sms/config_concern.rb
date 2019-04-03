@@ -20,11 +20,11 @@ module Sms::ConfigConcern
   included do
     has_many :messages, dependent: :destroy
 
-    DELIVERY_METHOD_TIPES = ["Inmediato", "Un dia antes", "X dias antes"]
+    DELIVERY_METHOD_TYPES = ["Inmediato", "Un dia antes", "X dias antes"]
     
     before_validation :_delivery_method
 
-    validates :delivery_method, presence: true, :inclusion => { :in => DELIVERY_METHOD_TIPES }
+    validates :delivery_method, presence: true, :inclusion => { :in => DELIVERY_METHOD_TYPES }
     validates :template, presence: true
     validates :cant, numericality: {only_integer: true, less_than_or_equal_to: 365, greater_than_or_equal_to: 0 }
     validates :key, presence: true, uniqueness: true

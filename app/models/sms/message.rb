@@ -8,7 +8,7 @@
 #  date       :datetime         not null
 #  config_id  :bigint(8)        not null
 #  status     :string(255)      not null
-#  error      :text(65535)
+#  log        :string(255) 
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

@@ -16,7 +16,7 @@ module Sms
       date = self.build_date(config, date)
       date.present? ? date2 = date : date2 = DateTime.now
 
-      message = Message.new(config_id: config_id, text: text, phone: number, date: date2,  status: "Esperando respuesta del servidor")
+      message = Message.new(config_id: config_id, text: text, phone: number, date: date2, status: "pending", log: "Esperando respuesta del servidor..")
 
       if message.save
         return self.connect_to_api(message, date, config)
@@ -30,7 +30,7 @@ module Sms
     message = Message.find(message_id)
 
     if !message.nil? && message.status == "fail"
-      message.update(status: "re-enviando", error: "")
+      message.update(status: "pending", log: "reenviando..")
       
       return self.connect_to_api(message, message.date.strftime('%Y-%m-%d %H:%M:%S'), message.config)
     else
@@ -91,26 +91,14 @@ module Sms
             request["Emisor"] = config.key.to_s
             request["Fecha_envio"] = date
 
-            Delayed::Worker.logger.info("---------------sms---------------")
-            Delayed::Worker.logger.info("---------------------------------")
-            Delayed::Worker.logger.info(request.to_hash.inspect)
-            Delayed::Worker.logger.info("---------------------------------")
-            Delayed::Worker.logger.info("---------------sms---------------")
-
-            Delayed::Worker.logger.info("---------------sms---------------")
-            Delayed::Worker.logger.info("---------------------------------")
-            Rails.logger.info(request.to_hash.inspect)
-            Delayed::Worker.logger.info("---------------------------------")
-            Delayed::Worker.logger.info("---------------sms---------------")
-
             response = http.request(request)
             body = JSON.parse(response.body)
 
             if response.code.to_i == 200
               if body["estado"].present?
-                message.update(status: body["estado"])
+                message.update(status: "success", log: body["estado"])
               else
-                message.update(status: "fail", error: "Error 200")
+                message.update(status: "fail", log: "Error 101")
               end 
             else
               array = Array.new
@@ -118,17 +106,17 @@ module Sms
               errores.each_with_index do |error, index|
                 array << error if !(body["errores"][index].nil?) && body["errores"][index] == 1
               end 
-              array.empty? ? (error = "Error desconocido") : (error = array.join(", "))
+              array.empty? ? (error = "Error 109") : (error = array.join(", "))
 
-              message.update(status: "fail", error: error) 
+              message.update(status: "fail", log: error) 
             end
           else
-            message.update(status: "fail", error: "Servidor no configurado")
+            message.update(status: "fail", log: "Servidor no configurado")
           end
 
           return message
         rescue SocketError, OpenURI::HTTPError, Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e       
-          message.update(status: "fail", error: "Servidor no responde")
+          message.update(status: "fail", log: "Servidor no responde")
           puts e
 
           return message

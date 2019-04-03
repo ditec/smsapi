@@ -13,7 +13,7 @@
 
   <div class="field"m id= "config_delivery">
     <%= form.label :delivery_method %>
-    <%= form.select :delivery_method, Sms::Config::DELIVERY_METHOD_TIPES %>
+    <%= form.select :delivery_method, Sms::Config::DELIVERY_METHOD_TYPES %>
 
     <%if @config.delivery_method == "X dias antes"%>
       <div id= "cant"> 

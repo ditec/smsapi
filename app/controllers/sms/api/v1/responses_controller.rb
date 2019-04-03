@@ -6,7 +6,7 @@ module Sms
     def api_sms_response
       @message = Message.where(id: request.headers["IdSMS"]).first
       
-      if !@message.nil? && request.headers["token"].present? && @message.valid_key?(request.headers["token"])
+      if !@message.nil? && @message.status = "success" && request.headers["token"].present? && @message.valid_key?(request.headers["token"])
         @response = @message.responses.new(text: request.headers["response"])
 
         if @response.save

@@ -5,9 +5,10 @@
     <tr>
       <th>ID</th>
       <th>Message</th>
+      <th>Shipping Date</th>
       <th>Number</th>
       <th>Status</th>
-      <th>Error</th>
+      <th>Log</th>
       <th>Response</th>
     </tr>
   </thead>
@@ -17,9 +18,10 @@
       <tr>
         <td><%= message.id %></td>
         <td><%= message.text %></td>
+        <td><%= message.date.strftime("%d/%m/%Y %H:%M")%></td>
         <td><%= message.phone %></td>
         <td><%= message.status %></td>
-        <td><%= message.error %></td>
+        <td><%= message.log %></td>
         <td> 
           <ul>
             <% message.responses.each do |response| %>

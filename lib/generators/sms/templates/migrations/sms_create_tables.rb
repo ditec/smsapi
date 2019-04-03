@@ -19,7 +19,7 @@ class SmsCreateTables < ActiveRecord::Migration[5.1]
       t.datetime :date, null: false
       t.references :config, index: true, null: false
       t.string :status, null: false
-      t.text :error
+      t.string :log
 
       t.timestamps
     end
