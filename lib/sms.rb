@@ -94,7 +94,11 @@ module Sms
 
             if response.code.to_i == 200
               if body["estado"].present?
-                message.update(status: "success", log: body["estado"])
+                if body["estado"] == "reintente"
+                  message.update(status: "fail", log: "reintente")
+                else
+                  message.update(status: "success", log: body["estado"])
+                end
               else
                 message.update(status: "fail", log: "Error 101")
               end 
