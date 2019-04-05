@@ -1,6 +1,10 @@
 Sms::Engine.routes.draw do
   resource :config, only: [:show, :new, :create, :edit, :update]
 
+  resources :messages, only: [] do 
+    post :resend, on: :member
+  end
+
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do
       post "api_sms_status_response", to: "messages#api_sms_status_response"

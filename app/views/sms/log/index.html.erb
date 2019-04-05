@@ -10,6 +10,7 @@
       <th>Status</th>
       <th>Log</th>
       <th>Response</th>
+      <th></th>
     </tr>
   </thead>
 
@@ -30,6 +31,11 @@
               </li>  
             <% end %>
           </ul>
+        </td>
+        <td>
+          <%-if message.status == "fail"%>
+            <%= link_to "Resend", sms.resend_message_path(message), method: :post, remote: true %>
+          <% end %>
         </td>
       </tr>
     <% end %>

@@ -4,7 +4,7 @@ module Sms
   class Api::V1::ResponsesController < ActionController::API
 
     def api_sms_response
-      @message = Message.where(id: request.headers["IdSMS"]).first
+      @message = Sms::Message.where(id: request.headers["IdSMS"]).first
       
       if !@message.nil? && @message.status = "success" && request.headers["token"].present? && @message.valid_key?(request.headers["token"])
         @response = @message.responses.new(text: request.headers["response"])
