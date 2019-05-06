@@ -3,6 +3,7 @@ Sms::Engine.routes.draw do
 
   resources :messages, only: [] do 
     post :resend, on: :member
+    post :cancel, on: :member
   end
 
   namespace :api, defaults: { format: "json" } do

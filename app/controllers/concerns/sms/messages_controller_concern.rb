@@ -22,4 +22,22 @@ module Sms::MessagesControllerConcern
       format.js
     end 
   end
+
+  def cancel
+    @cancelling = false
+    message = Sms::Message.find(params[:id])
+
+    if !(message.nil?) && message.status == "success"
+      @cancelling = true
+
+      if Sms.cancel!(message).nil?
+        message.update(status: "fail", log: "Error al cancelar")
+      end
+    end
+    
+    respond_to do |format|
+      format.js
+    end 
+  end
+
 end

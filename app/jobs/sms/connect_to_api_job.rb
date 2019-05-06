@@ -2,7 +2,7 @@ module Sms
   class ConnectToApiJob < ApplicationJob
     queue_as :default
    
-    def perform(message, date, config)
+    def perform(message, date, config, cancel)
       require 'uri'
       require 'net/http'
 
@@ -21,6 +21,14 @@ module Sms
             request["Emisor"] = config.key.to_s
             request["Fecha_envio"] = date
 
+            unless cancel
+              request["Solicitud"] = true
+              request["Cancelacion"] = false
+            else
+              request["Solicitud"] = false
+              request["Cancelacion"] = true
+            end 
+
             response = http.request(request)
             body = JSON.parse(response.body)
 
@@ -28,6 +36,8 @@ module Sms
               if body["estado"].present?
                 if body["estado"] == "reintente"
                   message.update(status: "fail", log: "reintente")
+                elsif body["estado"] == "cancelado"
+                  message.update(status: "canceled", log: "")
                 else
                   message.update(status: "success", log: body["estado"])
                 end

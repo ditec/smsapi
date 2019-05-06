@@ -22,7 +22,7 @@ module Sms::MessageConcern
     belongs_to :config
     has_many :responses, dependent: :destroy
 
-    STATUS_TYPES = ["success", "pending", "fail"]
+    STATUS_TYPES = ["success", "pending", "canceled", "fail"]
 
     validates :text, presence: true, length: { in: 1..160 }
     validates :config_id, presence: true
