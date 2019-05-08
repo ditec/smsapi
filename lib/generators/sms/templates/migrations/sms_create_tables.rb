@@ -20,6 +20,7 @@ class SmsCreateTables < ActiveRecord::Migration[5.1]
       t.references :config, index: true, null: false
       t.string :status, null: false
       t.string :log
+      t.boolean :cancel, default: false
 
       t.timestamps
     end

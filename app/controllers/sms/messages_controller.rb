@@ -8,5 +8,9 @@ module Sms
     #   super
     # end
     
+    # def cancel
+    #   super
+    # end
+
   end
 end

@@ -33,10 +33,10 @@
           </ul>
         </td>
         <td>
-          <%-if message.status == "fail"%>
-            <%= link_to "Resend", sms.resend_message_path(message), method: :post, remote: true %>
-            <%= link_to "Cancel", sms.cancel_message_path(message), method: :post, remote: true %>
-          <% end %>
+          <%#-if message.status == "fail"%>
+            <%#= link_to "Resend", sms.resend_message_path(message), method: :post, remote: true %>
+            <%#= link_to "Cancel", sms.cancel_message_path(message), method: :post, remote: true %>
+          <%# end %>
         </td>
       </tr>
     <% end %>

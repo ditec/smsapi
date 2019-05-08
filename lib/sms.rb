@@ -14,7 +14,7 @@ module Sms
       message = Sms::Message.new(config_id: config.id, text: text, phone: number, date: date2, status: "pending", log: "Esperando respuesta del servidor..")
 
       if message.save
-        Sms::ConnectToApiJob.perform_later(message, date, config, false)
+        Sms::ConnectToApiJob.perform_later(message, date, config)
         return message
       end
     end
@@ -23,9 +23,9 @@ module Sms
   end
 
   def self.resend!(message)
-    if !(message.nil?) && message.status == "fail"
+    if !(message.nil?) && (message.status == "fail") && !(message.cancel)
       if message.update(status: "pending", log: "reenviando..")
-        Sms::ConnectToApiJob.perform_later(message, message.date.strftime('%Y-%m-%d %H:%M:%S'), message.config, false)
+        Sms::ConnectToApiJob.perform_later(message, message.date.strftime('%Y-%m-%d %H:%M:%S'), message.config)
         return message
       end
     end
@@ -34,15 +34,27 @@ module Sms
   end
 
   def self.cancel!(message)
-    if !(message.nil?) && message.status == "success"
-      if message.update(status: "pending", log: "cancelando..")
-        Sms::ConnectToApiJob.perform_later(message, message.date.strftime('%Y-%m-%d %H:%M:%S'), message.config, true)
+    if !(message.nil?) && (message.status == "success" || (message.status == "fail" && (message.cancel))) 
+      if message.update(status: "pending", log: "cancelando..", cancel: true)
+        Sms::ConnectToApiJob.perform_later(message, message.date.strftime('%Y-%m-%d %H:%M:%S'), message.config)
         return message
       end
     end
 
     return nil
   end
+
+  def self.resend_all!(messages)
+    messages.each do |message|
+      self.resend!(message)
+    end
+  end
+
+  def self.cancel_all!(messages)
+    messages.each do |message|
+      self.cancel!(message)
+    end
+  end  
 
   private
 

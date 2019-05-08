@@ -10,7 +10,7 @@ module Sms::MessagesControllerConcern
     @resending = false
     message = Sms::Message.find(params[:id])
 
-    if !(message.nil?) && message.status == "fail"
+    unless message.nil?
       @resending = true
 
       if Sms.resend!(message).nil?
@@ -27,7 +27,7 @@ module Sms::MessagesControllerConcern
     @cancelling = false
     message = Sms::Message.find(params[:id])
 
-    if !(message.nil?) && message.status == "success"
+    unless message.nil?
       @cancelling = true
 
       if Sms.cancel!(message).nil?
